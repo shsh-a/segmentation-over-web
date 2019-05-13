@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+
+
+    <script type="text/javascript" src="{{url_for('static', filename='lib/jquery.1.10.2.min.js')}}"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <style>
+        #wPaint{
+            margin: 50px;
+
+        }
+        .container{
+            margin: 10px;
+            padding: 5px;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container" >
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{category}}" >
+                    {{ message }}
+
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    </div>
+    <div class="container">
+        <div>
+            <video autoplay="true" id="videoElement"></video>
+            <canvas id="imageContainer" width="224" height="224"></canvas>
+
+            <div class="form-group" >
+
+                <input id="button" value="Take snap" class="  btn btn-primary" type="button"  />
+            </div>
+        </div>
+
+
+        <!-- --------------------------------------wPaint part------------------>
+
+
+        <div class="content-box">
+            <!-- jQuery UI -->
+            <script type="text/javascript" src="{{url_for('static', filename='lib/jquery.ui.core.1.10.3.min.js')}} "></script>
+            <script type="text/javascript" src="{{url_for('static', filename='lib/jquery.ui.widget.1.10.3.min.js')}} "></script>
+            <script type="text/javascript" src="{{url_for('static', filename='lib/jquery.ui.mouse.1.10.3.min.js')}} "></script>
+            <script type="text/javascript" src="{{url_for('static', filename='lib/jquery.ui.draggable.1.10.3.min.js')}} "></script>
+
+
+            <!-- wColorPicker -->
+            <link rel="Stylesheet" type="text/css" href="{{url_for('static', filename ='lib/wColorPicker.min.css')}}" />
+            <script type="text/javascript" src="{{url_for('static', filename='lib/wColorPicker.min.js')}} "></script>
+
+
+            <!-- wPaint -->
+
+            <link rel="Stylesheet" type="text/css" href="{{url_for('static', filename ='wPaint.min.css')}}" />
+
+            <script type="text/javascript" src="{{url_for('static', filename='wPaint.min.js')}} "></script>
+            <script type="text/javascript" src="{{url_for('static', filename='plugins/main/wPaint.menu.main.min.js')}} "></script>
+            <script type="text/javascript" src="{{url_for('static', filename='plugins/text/wPaint.menu.text.min.js')}} "></script>
+            <script type="text/javascript" src="{{url_for('static', filename='plugins/shapes/wPaint.menu.main.shapes.min.js')}} "></script>
+            <script type="text/javascript" src="{{url_for('static', filename='plugins/file/wPaint.menu.main.file.min.js')}} "></script>
+
+
+            <h4> Annotage the image here. Paint the background in black. And the object in blue </h4>
+
+            <div id="wPaint" style="position:relative; width:224px; height:224px; background-color:#7a7a7a;"></div>
+
+
+
+            <center id="wPaint-img"></center>
+
+            <!-- ---------------------------------------------------------------------------------->
+            <button id = "uploadBtn" class="btn btn-danger" >Upload to server </button>
+
+        </div>
+        <span id="statusM">  </span>
+
+    </div>
+
+    <div class="container" >
+        <a href="http://localhost:5000/getcount">Get count of images </a> <br />
+        <a href="http://localhost:5000/delete">delete all images </a> <br />
+        <a href="http://localhost:5000/infer">do inferance </a>
+
+        </div>
+
+
+    <script>
+        "use strict";
+
+        var images = [
+        '/test/uploads/wPaint.png',
+        ];
+
+        function upload(){
+
+        }
+
+        function loadImgBg () {
+
+            // internal function for displaying background images modal
+            // where images is an array of images (base64 or url path)
+            // NOTE: that if you can't see the bg image changing it's probably
+            // becasue the foregroud image is not transparent.
+            this._showFileModal('bg', images);
+        }
+
+        function loadImgFg () {
+
+            // internal function for displaying foreground images modal
+            // where images is an array of images (base64 or url path)
+            this._showFileModal('fg', images);
+        }
+
+        // init wPaint
+        $('#wPaint').wPaint({
+            menuOffsetLeft: -35,
+            menuOffsetTop: -50,
+
+            loadImgBg: loadImgBg,
+            loadImgFg: loadImgFg
+        });
+
+        const video = document.getElementById("videoElement");
+        const snapCanvas = document.getElementById("imageContainer");
+        const canvas = document.getElementsByClassName("wPaint-canvas")[0];
+        const context = canvas.getContext("2d");
+        const uButton = document.getElementById("uploadBtn");
+        const button = document.getElementById("button");
+
+        const constraints = {audo:false, video:{width:224, height:224}};
+
+        button.addEventListener("click", ()=>{
+            context.drawImage(video, 0 , 0, canvas.width, canvas.height);
+            var destCtx = snapCanvas.getContext('2d');
+
+            destCtx.drawImage(canvas, 0, 0);
+
+
+        });
+
+        navigator.mediaDevices.getUserMedia(constraints)
+        .then(function(mediaStream){video.srcObject=mediaStream;});
+
+
+        uButton.addEventListener("click",() =>{
+
+            $.post("http://localhost:5000/getimages",
+            {
+                image1:snapCanvas.toDataURL("image/png"),
+                image2:canvas.toDataURL("image/png")
+            },
+            function(data,status){
+                    if (status == 'success')
+                    {
+                        document.getElementById("statusM").innerHTML = "Successfullly uploaded image";
+                    }
+            });
+        })
+
+    </script>
+</body>
+</html>
