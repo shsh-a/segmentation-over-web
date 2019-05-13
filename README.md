@@ -13,14 +13,15 @@ xml files of bounding boxes and cordinates.
 Basically user takes snaps from webcam. Annotates it
 on the webpage and sends it over to flask server
 server stores  both images. The model gets
-trained using segmentation_keras. I did not
-get enough time to experiment with models to
+trained using segmentation_keras or segmentation_models.
+ I did not get enough time to experiment with either to
 find which one would give decent results. I was thinking
-of using anything with Mobilenetv2.
+of using anything with MobilenetV2.
 
 Right now it  can take snaps
 Draw using wPaint.js and send to server
-infer using default model. 
+infer using default pretrained  model of segmentation_keras
+which seems to be not working well.
 
 
 
