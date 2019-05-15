@@ -15,29 +15,34 @@
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <style>
-        #wPaint{
-            margin: 50px;
+    #wPaint{
+        margin: 50px;
 
-        }
-        .container{
-            margin: 10px;
-            padding: 5px;
-        }
+    }
+    .container{
+        margin: 10px;
+        padding: 5px;
+    }
+
+    #a{
+        margin: 2px;
+        padding: 2px;
+    }
     </style>
 
 </head>
 <body>
     <div class="container" >
-    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{category}}" >
-                    {{ message }}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}}" >
+            {{ message }}
 
-                </div>
-            {% endfor %}
+        </div>
+        {% endfor %}
         {% endif %}
-    {% endwith %}
+        {% endwith %}
     </div>
     <div class="container">
         <div>
@@ -77,8 +82,8 @@
             <script type="text/javascript" src="{{url_for('static', filename='plugins/shapes/wPaint.menu.main.shapes.min.js')}} "></script>
             <script type="text/javascript" src="{{url_for('static', filename='plugins/file/wPaint.menu.main.file.min.js')}} "></script>
 
-
-            <h4> Annotage the image here. Paint the background in black. And the object in blue </h4>
+            
+            <h4> Annotage the image here. Paint the background in black. And the object in white </h4>
 
             <div id="wPaint" style="position:relative; width:224px; height:224px; background-color:#7a7a7a;"></div>
 
@@ -95,21 +100,21 @@
     </div>
 
     <div class="container" >
-        <a href="http://localhost:5000/getcount">Get count of images </a> <br />
-        <a href="http://localhost:5000/delete">delete all images </a> <br />
-        <a href="http://localhost:5000/infer">do inferance </a>
-        <a href="http://localhost:5000/infer">
-        <button class="btn btn-danger" start training </button></a>
+        <a href="http://localhost:5000/getcount"><button class="btn btn-primary" >get count of images</button> </a>
+        <a href="http://localhost:5000/delete"><button class="btn btn-danger" >delete all images </button> </a>
+        <a href="http://localhost:5000/infer"><button class="btn btn-primary" >Do inference</button> </a>
+        <a href="http://localhost:5000/train">
+            <button class="btn btn-danger" >start training </button></a>
 
 
         </div>
 
 
-    <script>
+        <script>
         "use strict";
 
         var images = [
-        '/test/uploads/wPaint.png',
+            '/test/uploads/wPaint.png',
         ];
 
         function upload(){
@@ -171,13 +176,13 @@
                 image2:canvas.toDataURL("image/png")
             },
             function(data,status){
-                    if (status == 'success')
-                    {
-                        document.getElementById("statusM").innerHTML = "Successfullly uploaded image";
-                    }
+                if (status == 'success')
+                {
+                    document.getElementById("statusM").innerHTML = "Successfullly uploaded image";
+                }
             });
         })
 
-    </script>
-</body>
-</html>
+        </script>
+    </body>
+    </html>

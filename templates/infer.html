@@ -9,38 +9,38 @@
     <meta http-equiv='pragma' content='no-cache'>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-
+    
     <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <style>
-        #wPaint{
-            margin: 50px;
+    #wPaint{
+        margin: 50px;
 
-        }
-        .container{
-            margin:10px;
-        }
-        #canvas, #vid{
-            border: 2px solid;
-        }
+    }
+    .container{
+        margin:10px;
+    }
+    #canvas, #vid{
+        border: 2px solid;
+    }
     </style>
 
 </head>
 <body>
     <div class="container" >
-    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{category}}" >
-                    {{ message }}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}}" >
+            {{ message }}
 
-                </div>
-            {% endfor %}
+        </div>
+        {% endfor %}
         {% endif %}
-    {% endwith %}
+        {% endwith %}
     </div>
     <div class="container">
         <div>
@@ -55,84 +55,84 @@
 
 
 
-            <button id = "uploadBtn" class="btn btn-danger" > Run inference on the image </button>
-            <h4> With Model </h4>
-            <select id = "sbox">
+        <button id = "uploadBtn" class="btn btn-danger" > Run inference on the image </button>
+        <h4> With Model </h4>
+        <select id = "sbox">
             {% for m in models %}
-                <option value="{{ m }}"> {{ m }} </option>
+            <option value="{{ m }}"> {{ m }} </option>
 
             {% endfor %}
-                </select>
-
-        </div>
-        <span id="statusM">  </span>
-
-
+        </select>
 
     </div>
-
-    <div class="container">
-        <a href="http://localhost:5000/getcount">Get count of images </a> <br />
-        <a href="http://localhost:5000/delete">delete all images </a> <br />
-        <a href="http://localhost:5000/">Home </a><br />
+    <span id="statusM">  </span>
 
 
 
+</div>
 
-
-        </div>
-        <div class="container">
-            <h1>result. this image gets overwritten after model predicts </h1>
-
-            <img src="data:image/png;base64,{{im}}" />
-            <img src="data:image/png;base64,{{im2}}" />
-
-
-            </div>
+<div class="container">
+    <a href="http://localhost:5000/getcount">Get count of images </a> <br />
+    <a href="http://localhost:5000/delete">delete all images </a> <br />
+    <a href="http://localhost:5000/">Home </a><br />
 
 
 
-    <script>
-
-        const video = document.getElementById("videoElement");
-        const canvas = document.getElementById("imageContainer");
-        const context = canvas.getContext("2d");
-        const uButton = document.getElementById("uploadBtn");
-        const button = document.getElementById("button");
-
-        const constraints = {audo:false, video:{width:224, height:224}};
-
-        button.addEventListener("click", ()=>{
-            context.drawImage(video, 0 , 0, canvas.width, canvas.height);
 
 
+</div>
+<div class="container">
+    <h1>result. this image gets overwritten after model predicts </h1>
 
-        });
-
-        navigator.mediaDevices.getUserMedia(constraints)
-        .then(function(mediaStream){video.srcObject=mediaStream;});
-
-
-        uButton.addEventListener("click",() =>{
+    <img src="data:image/png;base64,{{im}}" />
+    <img src="data:image/png;base64,{{im2}}" />
 
 
-            var s = document.getElementById("sbox");
-            var value = s.options[s.selectedIndex].value;
-            $.post("http://localhost:5000/infer",
-            {
+</div>
 
-                image:canvas.toDataURL("image/png"),
-                model: value
-            },
-            function(data,status){
-                    if (status == 'success')
-                    {
-                        document.getElementById("statusM").innerHTML = "Successfullly uploaded image. The image below should be replaced with your input image. ";
-                        window.location.href = "http://localhost:5000/result";
-                    }
-            });
-        })
 
-    </script>
+
+<script>
+
+const video = document.getElementById("videoElement");
+const canvas = document.getElementById("imageContainer");
+const context = canvas.getContext("2d");
+const uButton = document.getElementById("uploadBtn");
+const button = document.getElementById("button");
+
+const constraints = {audo:false, video:{width:224, height:224}};
+
+button.addEventListener("click", ()=>{
+    context.drawImage(video, 0 , 0, canvas.width, canvas.height);
+
+
+
+});
+
+navigator.mediaDevices.getUserMedia(constraints)
+.then(function(mediaStream){video.srcObject=mediaStream;});
+
+
+uButton.addEventListener("click",() =>{
+
+
+    var s = document.getElementById("sbox");
+    var value = s.options[s.selectedIndex].value;
+    $.post("http://localhost:5000/infer",
+    {
+
+        image:canvas.toDataURL("image/png"),
+        model: value
+    },
+    function(data,status){
+        if (status == 'success')
+        {
+            document.getElementById("statusM").innerHTML = "Successfullly uploaded image. The image below should be replaced with your input image. ";
+            window.location.href = "http://localhost:5000/result";
+        }
+    });
+})
+
+</script>
 </body>
 </html>

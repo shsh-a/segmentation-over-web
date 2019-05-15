@@ -48,6 +48,11 @@ def getData():
         with open("data/ann/"+file_name, 'wb') as f:
             f.write(img2data)
 
+        img = cv2.imread("data/ann/"+file_name, 0)
+
+        _,t_img = cv2.threshold(img, 100, 1, cv2.THRESH_BINARY)
+        cv2.imwrite("data/ann/"+file_name, t_img)
+
 
         flash(format("Got the image"),'success')
         global image_count
@@ -106,7 +111,7 @@ def infer():
             out3 = cv2.bitwise_and(original, original, mask=edges)
             out3 = np.hstack((original, out, out3))
             cv2.imwrite("static/out2.png", out3)
-            
+
 
 
 
@@ -120,6 +125,21 @@ def result():
         return send_file("static/out2.png")
     except:
         abort(404)
+
+
+@app.route("/train")
+def training():
+    K.clear_session()
+
+
+
+    model = seg.models.segnet.mobilenet_segnet(n_classes=2, input_height=224, input_width=224)
+    model.train( train_images =  "data/train", train_annotations = "data/ann", checkpoints_path = "model/" , epochs=1 )
+    model.save_weights('model/mobilent_segnet'+str(time.time()).split('.')[0]+'.h5')
+
+    return "training has finished, now you should be able to select new model"
+
+
 
 if __name__ == '__main__':
     app.run(debug = True)
