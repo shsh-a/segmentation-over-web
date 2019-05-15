@@ -4,7 +4,9 @@
     <meta charset="utf-8">
     <title></title>
 
-
+    <meta http-equiv='cache-control' content='no-cache'>
+    <meta http-equiv='expires' content='0'>
+    <meta http-equiv='pragma' content='no-cache'>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 
@@ -79,13 +81,16 @@
 
 
         </div>
-
         <div class="container">
             <h1>result. this image gets overwritten after model predicts </h1>
 
-            <img src='{{url_for("static", filename="out.png")}}'>
+            <img src="data:image/png;base64,{{im}}" />
+            <img src="data:image/png;base64,{{im2}}" />
+
 
             </div>
+
+
 
     <script>
 
@@ -123,6 +128,7 @@
                     if (status == 'success')
                     {
                         document.getElementById("statusM").innerHTML = "Successfullly uploaded image. The image below should be replaced with your input image. ";
+                        window.location.href = "http://localhost:5000/result";
                     }
             });
         })

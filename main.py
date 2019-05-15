@@ -1,23 +1,29 @@
-from flask import Flask, render_template, request, flash
+from flask import Flask, render_template, request, flash, abort, send_file
 from flask_cors import CORS
 import base64
 import random
 import os
 import glob
 import cv2
-import keras_segmentation
+import keras_segmentation as seg
 from keras import backend as K
+import time
+import numpy as np
 
 
 app = Flask(__name__)
 app.secret_key = '208f2hdd029duq0isjc0jqwij0d2r0fj02'
 
+
 CORS(app)
 
-models_list = ['default']
+models_list = []
 m = os.listdir('model')
 models_list +=m
 image_count = 0
+t = 0
+image1 = 0
+image2 = 0
 
 
 @app.route("/")
@@ -69,6 +75,8 @@ def delete():
 
 @app.route("/infer", methods=["GET", "POST"])
 def infer():
+    global image1, image2
+
     if request.method == "POST":
         image = request.form.get("image").split(",")[1]
         model_name = request.form['model']
@@ -76,22 +84,42 @@ def infer():
         with open("static/input.png", 'wb') as f:
             f.write(imgdata)
 
-        if model_name == 'default':
+        if model_name in models_list:
             K.clear_session()
 
-            model = keras_segmentation.pretrained.resnet_pspnet_VOC12_v0_1()
+            model = seg.models.segnet.mobilenet_segnet(n_classes=2, input_height=224, input_width=224)
+            model.load_weights("model/"+model_name)
+
+
+
             out = model.predict_segmentation(inp = "static/input.png", out_fname= "static/out.png")
 
+            original = cv2.imread("static/input.png",0)
+            #original = cv2.resize(original, (224,224))
 
 
-    return render_template("infer.html", models = models_list)
+            out = cv2.imread("static/out.png",0)
+            _,out2 = cv2.threshold(out, 155, 255, cv2.THRESH_BINARY)
+
+            edges = cv2.Canny(out2, 100, 200)
+            edges = cv2.bitwise_not(edges)
+            out3 = cv2.bitwise_and(original, original, mask=edges)
+            out3 = np.hstack((original, out, out3))
+            cv2.imwrite("static/out2.png", out3)
+            
+
+
+
+    return render_template("infer.html", models = models_list,im1= image1, im2 = image2)
 
 
 
 @app.route("/result")
 def result():
-
-    return render_template("result.html")
+    try:
+        return send_file("static/out2.png")
+    except:
+        abort(404)
 
 if __name__ == '__main__':
     app.run(debug = True)
