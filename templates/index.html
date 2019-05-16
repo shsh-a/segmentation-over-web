@@ -33,6 +33,10 @@
     .row{
         margin: 5px;
     }
+    #bBtn{
+        background-color: black;
+        color: white;
+    }
     </style>
 
 </head>
@@ -77,8 +81,8 @@
         <div class="row">
             <h4> Annotate Here. Background with black. Object with white. </h4>
             <button class="btn btn-primary" id="clearBtn"> Clear </button>
-            <button class="btn btn-primary" id = "wBtn"> White </button>
-            <button class="btn btn-primary"id ="bBtn"> Black </button>
+            <button class="btn btn-default" id = "wBtn"> White </button>
+            <button class="btn btn-default"id ="bBtn"> Black </button>
 
             <lable> Select brush Size </label>
                 <select id="sizeList" >
@@ -162,14 +166,7 @@
 
 
 
-            $('#clearCanvasSimpleColors').mousedown(function(e)
-            {
-                clickX_simpleColors = new Array();
-                clickY_simpleColors = new Array();
-                clickDrag_simpleColors = new Array();
-                //clickColor_simpleColors = new Array();
 
-            });
 
 
 
@@ -224,6 +221,19 @@
                 sizeList.push(curSize);
 
             }
+
+            $('#clearBtn, #button, #uploadBtn').click(function()
+            {
+                clickX = new Array();
+                clickY = new Array();
+                clickDrag = new Array();
+                clickColor = new Array();
+
+                var destCtx = paintCanvas.getContext('2d');
+
+                destCtx.drawImage(snapCanvas, 0, 0);
+
+            });
 
 
 
