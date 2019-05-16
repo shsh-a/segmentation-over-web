@@ -20,11 +20,13 @@ trained using [segmentation_keras](https://github.com/divamgupta/image-segmentat
 find which one would give decent results. I was thinking
 of using anything with MobilenetV2.
 
-Right now it  can take snaps
-Draw using [wPaint.js](https://github.com/websanova/wPaint) and send to server
+Right now it  can take snaps. Can build simple datasets.
 infer using default pretrained  model of segmentation_keras
 which seems to be not working well.
 
+[image segmentation keras](https://github.com/divamgupta/image-segmentation-keras)
+
+[canvas drawing tutorial](http://www.williammalone.com/articles/create-html5-canvas-javascript-drawing-app/#demo-simple)
 
 
 To do
