@@ -5,7 +5,6 @@
     <title></title>
 
 
-    <script type="text/javascript" src="{{url_for('static', filename='lib/jquery.1.10.2.min.js')}}"></script>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 
@@ -28,6 +27,12 @@
         margin: 2px;
         padding: 2px;
     }
+    #canvas{
+        border: 2px solid;
+    }
+    .row{
+        margin: 5px;
+    }
     </style>
 
 </head>
@@ -43,119 +48,82 @@
         {% endfor %}
         {% endif %}
         {% endwith %}
-    </div>
-    <div class="container">
-        <div>
-            <video autoplay="true" id="videoElement"></video>
-            <canvas id="imageContainer" width="224" height="224"></canvas>
 
-            <div class="form-group" >
+        <div class="row">
+            <div class="col-sm-6">
+                <h4> Webcam </h4>
+                <video autoplay="true" id="videoElement"></video>
 
-                <input id="button" value="Take snap" class="  btn btn-primary" type="button"  />
+                <div class="form-group" >
+
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <h4> Snapped image </h4>
+                <canvas id="imageContainer" width="224" height="224"></canvas>
+
+            </div>
+        </div>
+        <div class="row">
+            <input id="snapButton" value="Take snap" class="  btn btn-primary" type="button"  />
+            <button id = "uploadBtn" class="btn btn-danger" >Upload to server </button>
+
+
+        </div>
+        <div class="row">
+            <span id="statusM">  </span>
+        </div>
+
+        <div class="row">
+            <h4> Annotate Here. Background with black. Object with white. </h4>
+            <button class="btn btn-primary" id="clearBtn"> Clear </button>
+            <button class="btn btn-primary" id = "wBtn"> White </button>
+            <button class="btn btn-primary"id ="bBtn"> Black </button>
+
+            <lable> Select brush Size </label>
+                <select id="sizeList" >
+                    <option value="5" >5</option>
+                    <option value="10" >10</option>
+                    <option value="20" >20</option>
+                    <option value="30" >30</option>
+                    <option value="40" >30</option>
+                    <option value="50" >50</option>
+                </select>
+
+
+            </div>
+            <div class="row">
+
+                <canvas id="paintCanvas" width="224" height="224"></canvas>
+            </div>
+
+
+            <div class="row">
+
+                <a href="http://localhost:5000/getcount"><button class="btn btn-primary" >get count of images</button> </a>
+                <a href="http://localhost:5000/delete"><button class="btn btn-danger" >delete all images </button> </a>
+                <a href="http://localhost:5000/infer"><button class="btn btn-primary" >Do inference</button> </a>
+                <a href="http://localhost:5000/train"> <button class="btn btn-danger" >start training </button></a>
+
             </div>
         </div>
 
-
-        <!-- --------------------------------------wPaint part------------------>
-
-
-        <div class="content-box">
-            <!-- jQuery UI -->
-            <script type="text/javascript" src="{{url_for('static', filename='lib/jquery.ui.core.1.10.3.min.js')}} "></script>
-            <script type="text/javascript" src="{{url_for('static', filename='lib/jquery.ui.widget.1.10.3.min.js')}} "></script>
-            <script type="text/javascript" src="{{url_for('static', filename='lib/jquery.ui.mouse.1.10.3.min.js')}} "></script>
-            <script type="text/javascript" src="{{url_for('static', filename='lib/jquery.ui.draggable.1.10.3.min.js')}} "></script>
-
-
-            <!-- wColorPicker -->
-            <link rel="Stylesheet" type="text/css" href="{{url_for('static', filename ='lib/wColorPicker.min.css')}}" />
-            <script type="text/javascript" src="{{url_for('static', filename='lib/wColorPicker.min.js')}} "></script>
-
-
-            <!-- wPaint -->
-
-            <link rel="Stylesheet" type="text/css" href="{{url_for('static', filename ='wPaint.min.css')}}" />
-
-            <script type="text/javascript" src="{{url_for('static', filename='wPaint.min.js')}} "></script>
-            <script type="text/javascript" src="{{url_for('static', filename='plugins/main/wPaint.menu.main.min.js')}} "></script>
-            <script type="text/javascript" src="{{url_for('static', filename='plugins/text/wPaint.menu.text.min.js')}} "></script>
-            <script type="text/javascript" src="{{url_for('static', filename='plugins/shapes/wPaint.menu.main.shapes.min.js')}} "></script>
-            <script type="text/javascript" src="{{url_for('static', filename='plugins/file/wPaint.menu.main.file.min.js')}} "></script>
-
-            
-            <h4> Annotage the image here. Paint the background in black. And the object in white </h4>
-
-            <div id="wPaint" style="position:relative; width:224px; height:224px; background-color:#7a7a7a;"></div>
-
-
-
-            <center id="wPaint-img"></center>
-
-            <!-- ---------------------------------------------------------------------------------->
-            <button id = "uploadBtn" class="btn btn-danger" >Upload to server </button>
-
-        </div>
-        <span id="statusM">  </span>
-
-    </div>
-
-    <div class="container" >
-        <a href="http://localhost:5000/getcount"><button class="btn btn-primary" >get count of images</button> </a>
-        <a href="http://localhost:5000/delete"><button class="btn btn-danger" >delete all images </button> </a>
-        <a href="http://localhost:5000/infer"><button class="btn btn-primary" >Do inference</button> </a>
-        <a href="http://localhost:5000/train">
-            <button class="btn btn-danger" >start training </button></a>
-
-
-        </div>
 
 
         <script>
         "use strict";
 
-        var images = [
-            '/test/uploads/wPaint.png',
-        ];
-
-        function upload(){
-
-        }
-
-        function loadImgBg () {
-
-            // internal function for displaying background images modal
-            // where images is an array of images (base64 or url path)
-            // NOTE: that if you can't see the bg image changing it's probably
-            // becasue the foregroud image is not transparent.
-            this._showFileModal('bg', images);
-        }
-
-        function loadImgFg () {
-
-            // internal function for displaying foreground images modal
-            // where images is an array of images (base64 or url path)
-            this._showFileModal('fg', images);
-        }
-
-        // init wPaint
-        $('#wPaint').wPaint({
-            menuOffsetLeft: -35,
-            menuOffsetTop: -50,
-
-            loadImgBg: loadImgBg,
-            loadImgFg: loadImgFg
-        });
 
         const video = document.getElementById("videoElement");
         const snapCanvas = document.getElementById("imageContainer");
-        const canvas = document.getElementsByClassName("wPaint-canvas")[0];
+        const canvas = document.getElementById("paintCanvas");
         const context = canvas.getContext("2d");
         const uButton = document.getElementById("uploadBtn");
-        const button = document.getElementById("button");
+        const snapButton = document.getElementById("snapButton");
 
         const constraints = {audo:false, video:{width:224, height:224}};
 
-        button.addEventListener("click", ()=>{
+        snapButton.addEventListener("click", ()=>{
             context.drawImage(video, 0 , 0, canvas.width, canvas.height);
             var destCtx = snapCanvas.getContext('2d');
 
@@ -178,10 +146,116 @@
             function(data,status){
                 if (status == 'success')
                 {
-                    document.getElementById("statusM").innerHTML = "Successfullly uploaded image";
+                    document.getElementById("statusM").innerHTML = "<div class='alert alert-success' role='alert'> Image uploaded uccessfullly!</div>";
                 }
             });
         })
+
+
+        $(document).ready(function(){
+
+
+
+
+            const context = document.getElementById('paintCanvas').getContext("2d");
+
+
+
+
+            $('#clearCanvasSimpleColors').mousedown(function(e)
+            {
+                clickX_simpleColors = new Array();
+                clickY_simpleColors = new Array();
+                clickDrag_simpleColors = new Array();
+                //clickColor_simpleColors = new Array();
+
+            });
+
+
+
+            var curColor = "#000000";
+            var clickColor = new Array();
+            var sizeList = new Array();
+            var curSize = "5";
+
+            $('#wBtn').click(function(){ curColor = "#ffffff"; });
+
+            $('#bBtn').click(function(){ curColor = "#000000"; });
+
+
+            $('#sizeList').on('change', function(){ curSize = $(this).val();   });
+
+            $('#paintCanvas').mousedown(function(e){
+                console.log("mouse down");
+                var mouseX = e.pageX - this.offsetLeft;
+                var mouseY = e.pageY - this.offsetTop;
+
+                paint = true;
+                addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
+                redraw();
+            });
+
+            $('#paintCanvas').mousemove(function(e){
+                if(paint){
+                    addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+                    redraw();
+                }
+            });
+
+            $('#paintCanvas').mouseup(function(e){
+                paint = false;
+            });
+
+            $('#paintCanvas').mouseleave(function(e){
+                paint = false;
+            });
+
+            var clickX = new Array();
+            var clickY = new Array();
+            var clickDrag = new Array();
+            var paint;
+
+            function addClick(x, y, dragging)
+            {
+                clickX.push(x);
+                clickY.push(y);
+                clickDrag.push(dragging);
+                clickColor.push(curColor);
+                sizeList.push(curSize);
+
+            }
+
+
+
+            function redraw(){
+                //context.clearRect(0, 0, context.#paintCanvas.width, context.#paintCanvas.height); // Clears the #paintCanvas
+
+                context.lineJoin = "round";
+
+                for(var i=0; i < clickX.length; i++) {
+                    context.beginPath();
+                    if(clickDrag[i] && i){
+                        context.moveTo(clickX[i-1], clickY[i-1]);
+                    }else{
+                        context.moveTo(clickX[i]-1, clickY[i]);
+                    }
+                    context.lineTo(clickX[i], clickY[i]);
+                    context.closePath();
+                    context.stroke();
+                    context.strokeStyle = clickColor[i];
+                    context.lineWidth = sizeList[i];
+
+                }
+            }
+
+
+
+
+
+
+
+        });
+
 
         </script>
     </body>
