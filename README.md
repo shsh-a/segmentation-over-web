@@ -2,6 +2,7 @@
 # segmentation-over-web
 My attempt at making an interactive app that works from browser
 and trains an ML model.
+![alt text](https://raw.githubusercontent.com/shsh-a/segmentation-over-web/master/static/out2.png)
 
 I could not find a good referneces to do training
 on tensorflow.js. I found many sketching libraries
