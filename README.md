@@ -12,13 +12,11 @@ was easier, just sketch object and background. If
 I had to choosen detection then I would have to generate
 xml files of bounding boxes and cordinates.
 
-Basically user takes snaps from webcam. Annotates it
-on the webpage and sends it over to flask server
-server stores  both images. The model gets
-trained using [segmentation_keras](https://github.com/divamgupta/image-segmentation-keras) or [segmentation_models](https://github.com/qubvel/segmentation_models).
- I did not get enough time to experiment with either to
-find which one would give decent results. I was thinking
-of using anything with MobilenetV2.
+Basically user takes snaps from webcam.Lets you annotate it
+on the webpage and send it over to flask server.
+Server stores  both images. The model gets
+trained using [segmentation_keras](https://github.com/divamgupta/image-segmentation-keras).
+
 
 Right now it  can take snaps. Can build simple datasets.
 infer using default pretrained  model of segmentation_keras
@@ -30,7 +28,7 @@ which seems to be not working well.
 
 
 To do
-- training
+- May be add tensorflow serving
 
 ## Running
 
