@@ -19,8 +19,7 @@ trained using [segmentation_keras](https://github.com/divamgupta/image-segmentat
 
 
 Right now it  can take snaps. Can build simple datasets.
-infer using default pretrained  model of segmentation_keras
-which seems working. 
+and infer once you are done. 
 
 [image segmentation keras](https://github.com/divamgupta/image-segmentation-keras)
 
