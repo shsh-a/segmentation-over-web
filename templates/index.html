@@ -14,10 +14,7 @@
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <style>
-    #wPaint{
-        margin: 50px;
 
-    }
     .container{
         margin: 10px;
         padding: 5px;
@@ -64,7 +61,7 @@
             </div>
             <div class="col-sm-6">
                 <h4> Snapped image </h4>
-                <canvas id="imageContainer" width="224" height="224"></canvas>
+                <canvas id="imageContainer" width="500" height="500"></canvas>
 
             </div>
         </div>
@@ -98,7 +95,7 @@
             </div>
             <div class="row">
 
-                <canvas id="paintCanvas" width="224" height="224"></canvas>
+                <canvas id="paintCanvas" width="500" height="500"></canvas>
             </div>
 
 
@@ -125,7 +122,7 @@
         const uButton = document.getElementById("uploadBtn");
         const snapButton = document.getElementById("snapButton");
 
-        const constraints = {audo:false, video:{width:224, height:224}};
+        const constraints = {audo:false, video:{width:500, height:500}};
 
         snapButton.addEventListener("click", ()=>{
             context.drawImage(video, 0 , 0, canvas.width, canvas.height);

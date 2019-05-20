@@ -18,12 +18,21 @@ app.secret_key = '208f2hdd029duq0isjc0jqwij0d2r0fj02'
 CORS(app)
 
 models_list = []
-m = os.listdir('model')
-models_list +=m
+
 image_count = 0
 t = 0
 image1 = 0
 image2 = 0
+
+def getModels():
+    global models_list
+    m = os.listdir('model')
+    models_list+=m
+
+
+
+def getcount():
+    return len(os.listdir("data/train/"))
 
 
 @app.route("/")
@@ -34,12 +43,15 @@ def index():
 
 @app.route("/getimages", methods=["GET", "POST"])
 def getData():
+    getModels()
     if request.method == "POST":
         image1 = request.form.get("image1").split(",")[1]
         image2 = request.form.get("image2").split(",")[1]
 
         img1data = base64.b64decode(image1)
         img2data = base64.b64decode(image2)
+
+
 
         file_name = str(image_count)+".png"
         with open("data/train/"+file_name, 'wb') as f:
@@ -51,7 +63,14 @@ def getData():
         img = cv2.imread("data/ann/"+file_name, 0)
 
         _,t_img = cv2.threshold(img, 100, 1, cv2.THRESH_BINARY)
+        t_img = cv2.resize(t_img, (224,224))
         cv2.imwrite("data/ann/"+file_name, t_img)
+
+        img = cv2.imread("data/train/"+file_name, 0)
+
+
+        img = cv2.resize(img, (224,224))
+        cv2.imwrite("data/train/"+file_name, img)
 
 
         flash(format("Got the image"),'success')
@@ -89,7 +108,7 @@ def infer():
         with open("static/input.png", 'wb') as f:
             f.write(imgdata)
 
-        if model_name in models_list:
+        if model_name in  os.listdir('model'):
             K.clear_session()
 
             model = seg.models.segnet.mobilenet_segnet(n_classes=2, input_height=224, input_width=224)
@@ -115,7 +134,7 @@ def infer():
 
 
 
-    return render_template("infer.html", models = models_list,im1= image1, im2 = image2)
+    return render_template("infer.html", models = os.listdir('model'),im1= image1, im2 = image2)
 
 
 
@@ -129,9 +148,8 @@ def result():
 
 @app.route("/train")
 def training():
+
     K.clear_session()
-
-
 
     model = seg.models.segnet.mobilenet_segnet(n_classes=2, input_height=224, input_width=224)
     model.train( train_images =  "data/train", train_annotations = "data/ann", checkpoints_path = "model/" , epochs=1 )
@@ -142,4 +160,4 @@ def training():
 
 
 if __name__ == '__main__':
-    app.run(debug = True)
+    app.run(debug = True, host = '0.0.0.0')
